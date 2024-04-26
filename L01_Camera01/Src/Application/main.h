@@ -53,11 +53,13 @@ private:
 
 	//カメラ
 	std::shared_ptr<KdCamera> m_spCamera = nullptr;
+	float m_yRot=0.0f;
+	float m_yRotPow=1.0f;
 
 	//板ポリゴン
 	std::shared_ptr<KdSquarePolygon> m_spPoly = nullptr;
-	float m_zPos = 5;
-	float m_zMove = 2;
+	Math::Matrix m_HamuWorld = Math::Matrix::Identity;
+	Math::Vector3 m_HamuPos;
 
 	//地形モデル
 	std::shared_ptr<KdModelData> m_spModel = nullptr;

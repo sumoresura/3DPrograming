@@ -64,18 +64,34 @@ void Application::PreUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Update()
 {
-	//ハム
-	//m_zPos += m_zMove;
-	if (GetAsyncKeyState('Z') & 0x8000)m_zPos -= 0.5f;
-	if (GetAsyncKeyState('X') & 0x8000)m_zPos += 0.5f;
-
 	//カメラ行列の更新
 	{
-		Math::Matrix _localPos = Math::Matrix::CreateTranslation(0, 6.0f, 0);
+		//拡縮　どれくらいの大きさか
+		Math::Matrix _mScale = Math::Matrix::CreateScale(1);
+
+		//回転　どれだけ傾けているか
+		//m_yRot += m_yRotPow;
+		Math::Matrix _mRotationX = Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(45));
+		Math::Matrix _mRotationY = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_yRot));
+
+		//移動　どこに配置されてるか
+		Math::Matrix _mTrans = Math::Matrix::CreateTranslation(0, 6.0f, -5.0f);
 
 		//カメラの「ワールド行列」を作成し、適応させる
-		Math::Matrix _worldMat = _localPos;
+		//W=S*R*T
+		Math::Matrix _worldMat =_mScale * _mRotationX * _mTrans;
+		_worldMat*=_mRotationY;
 		m_spCamera->SetCameraMatrix(_worldMat);
+	}
+
+	//ハム太郎更新
+	{
+		if (GetAsyncKeyState('W'));
+		if (GetAsyncKeyState('A'));
+		if (GetAsyncKeyState('S'));
+		if (GetAsyncKeyState('D'));
+
+		m_HamuWorld = Math::Matrix::CreateTranslation(m_HamuPos);
 	}
 }
 
@@ -133,8 +149,7 @@ void Application::Draw()
 	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
-		Math::Matrix _mat = Math::Matrix::CreateTranslation(0, 0, m_zPos);
-		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPoly, _mat);
+		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPoly, m_HamuWorld);
 
 		KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel);
 	}
@@ -249,6 +264,7 @@ bool Application::Init(int w, int h)
 	//===================================================================
 	m_spPoly = std::make_shared<KdSquarePolygon>();
 	m_spPoly->SetMaterial("Asset/Data/LessonData/Character/Hamu.png");
+	m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
 
 	//===================================================================
 	// 地形初期化
