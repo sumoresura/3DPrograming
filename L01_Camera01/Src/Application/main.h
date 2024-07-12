@@ -8,7 +8,7 @@ class Application
 {
 // メンバ
 public:
-
+	
 	// アプリケーション実行
 	void Execute();
 
@@ -55,13 +55,9 @@ private:
 	std::shared_ptr<KdCamera> m_spCamera = nullptr;
 	float m_yRot=0.0f;
 	float m_yRotPow=1.0f;
-
-	//板ポリゴン
-	std::shared_ptr<KdSquarePolygon> m_spPoly = nullptr;
-	Math::Matrix m_HamuWorld = Math::Matrix::Identity;
-
-	//地形モデル
-	std::shared_ptr<KdModelData> m_spModel = nullptr;
+	
+	//ゲームオブジェクトリスト
+	std::vector<std::shared_ptr<KdGameObject>>m_GameObjList;
 
 //=====================================================
 // シングルトンパターン
