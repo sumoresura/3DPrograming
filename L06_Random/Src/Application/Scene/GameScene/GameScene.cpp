@@ -7,6 +7,15 @@
 #include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
 #include "../../GameObject/Camera/TPSCamera/TPSCamera.h"
 #include "../../GameObject/Camera/CCTVCamera/CCTVCamera.h"
+
+// 少数第n位で四捨五入する
+void round_n(float& number, int n)
+{
+	number = number * pow(10, n - 1);
+	number = round(number);
+	number /= pow(10, n - 1);
+}
+
 void GameScene::Init()
 {
 	//===================================================================
@@ -85,20 +94,49 @@ void GameScene::Init()
 	///////////////////////////////////////
 	//レッスンその１：ｃカードとｒカードをそれぞれ50％の確率で起動時に表示せよ
 	//レッスンその2：ｃカードとｒカードをそれぞれ99.5％,0.5%の確率で起動時に表示せよ
-	int tmp = KdGetInt(1, 1000);
-	//結果を出力
+	//レッスンその3：ｃカードとｒカードとsrカードをそれぞれ34%,33%,33%の確率で起動時に表示せよ
+	//レッスンその4：ｃカードとｒカードとsrカードをそれぞれ50%,49.5%,0.5%の確率で起動時に表示せよ
+	int bunbo = 1000;
+	int randNum[3] = { 500,495,5 };
+	int ThusenNum = 10000000;
+	int TosenNum[3] = { 0,0,0 };
+	for (int i = 0; i < ThusenNum; i++)
+	{
+		int rand = KdGetInt(0, bunbo - 1);
+		
+		for (int j = 0; j < std::size(randNum); j++)
+		{
+			rand -= randNum[j];
+			if (rand < 0)
+			{
+				TosenNum[j]++;
+				break;
+			}
+		}
+	}
 	OutputDebugStringA("-----------------------------------------------\n");
-	std::stringstream ss;
-	if (tmp <= 950)
+	float prob = 0;
+	for (int i = 0; i < std::size(TosenNum); i++)
 	{
-		ss << "CカードGET！" << "\n";
+		std::stringstream ss;
+		prob = ((float)TosenNum[i] / (float)ThusenNum) * 100;
+		round_n(prob, 3);
+
+		switch (i)
+		{
+		case 0:
+			ss << "Cカード！" << "当選回数=" << TosenNum[0] << " " << "当選確率=" << prob << "%" << "\n";
+			break;
+		case 1:
+			ss << "Rカード！" << "当選回数=" << TosenNum[1] << " " << "当選確率=" << prob << "%" << "\n";
+			break;
+		case 2:
+			ss << "SRカード！" << "当選回数=" << TosenNum[2] << " " << "当選確率=" << prob << "%" << "\n";
+			break;
+		}
+		std::string str = ss.str();
+		OutputDebugStringA(str.c_str());
 	}
-	else
-	{
-		ss << "RカードGET！" << "\n";
-	}
-	std::string str = ss.str();
-	OutputDebugStringA(str.c_str());
 	OutputDebugStringA("-----------------------------------------------\n");
 
 }
