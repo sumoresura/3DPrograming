@@ -37,6 +37,13 @@ float4 main(VSOutput In) : SV_Target0
 		discard;
 	}
 
+	//アウトライン描画チェック
+	if(g_EnableOutLineDraw)
+	{
+		//単色で返す
+		return float4(0, 0, 0, 1);
+	}
+	
 	// カメラへの方向
 	float3 vCam = g_CamPos - In.wPos;
 	float camDist = length(vCam); // カメラ - ピクセル距離

@@ -53,8 +53,6 @@ public:
 		{
 			m_cb0_Obj.Work().EnableOutLineDraw = enableOutLineDraw;
 			m_dirtyCBObj = true;
-
-
 		}
 	}
 
@@ -81,7 +79,16 @@ public:
     void DrawModel(const KdModelData& rModel, const Math::Matrix& mWorld = Math::Matrix::Identity,
         const Math::Color& colRate = kWhiteColor, const Math::Vector3& emissive = Math::Vector3::Zero);
 
+	// モデルワーク描画：アニメーションに対応
+	void DrawModel(KdModelWork& rModel, const Math::Matrix& mWorld = Math::Matrix::Identity,
+		const Math::Color& colRate = kWhiteColor, const Math::Vector3& emissive = Math::Vector3::Zero);
+
 private:
+	//アウトライン描画設定フラグの取得
+	bool GetEnableOutLineDraw() { return m_cb0_Obj.Work().EnableOutLineDraw; }
+
+	//定数バッファを初期状態に戻す
+	void ResetCBObject();
 
 	// マテリアルのセット
 	void WriteMaterial(	const KdMaterial& material, const Math::Vector4& colRate,
@@ -96,4 +103,7 @@ private:
 	KdConstantBuffer<cbObject>		m_cb0_Obj;		// オブジェクト単位で更新
 	KdConstantBuffer<cbMesh>		m_cb1_Mesh;		// メッシュ毎に更新
 	KdConstantBuffer<cbMaterial>	m_cb2_Material;	// マテリアル毎に更新
+
+	bool m_dirtyCBObj = false;	//定数バッファのオブジェクトに変更があったかどうか
+
 };
